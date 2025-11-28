@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h4>{{ modo }} almacén</h4>
+<form method="POST" class="row g-3">
+  {{ form.hidden_tag() }}
+  <div class="col-md-6">{{ form.nombre.label }} {{ form.nombre(class="form-control") }}</div>
+  <div class="col-12">
+    <button class="btn btn-primary" type="submit">{{ modo }}</button>
+    <a class="btn btn-secondary" href="{{ url_for('almacenes') }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

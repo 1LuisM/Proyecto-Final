@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Productos</h2>
+
+    <!-- Filtros -->
+    <form method="POST" class="mb-4">
+        {{ form.hidden_tag() }}
+        <div class="row">
+            <div class="col-md-2">{{ form.id.label }} {{ form.id(class="form-control") }}</div>
+            <div class="col-md-3">{{ form.nombre.label }} {{ form.nombre(class="form-control") }}</div>
+            <div class="col-md-2">{{ form.precio_min.label }} {{ form.precio_min(class="form-control") }}</div>
+            <div class="col-md-2">{{ form.precio_max.label }} {{ form.precio_max(class="form-control") }}</div>
+            <div class="col-md-2">{{ form.cantidad_min.label }} {{ form.cantidad_min(class="form-control") }}</div>
+            <div class="col-md-2">{{ form.cantidad_max.label }} {{ form.cantidad_max(class="form-control") }}</div>
+            <div class="col-md-3">{{ form.departamento.label }} {{ form.departamento(class="form-control") }}</div>
+            <div class="col-md-3">{{ form.almacen.label }} {{ form.almacen(class="form-select") }}</div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-3">
+                {{ form.usuario_modificacion.label }}
+                {{ form.usuario_modificacion(class="form-control") }}
+            </div>
+            <div class="col-md-3">
+                {{ form.filtro_modificaciones.label }}
+                {{ form.filtro_modificaciones(class="form-select") }}
+            </div>
+        </div>
+        <div class="mt-3">{{ form.submit(class="btn btn-primary") }}</div>
+    </form>
+
+    <!-- Tabla de productos -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th><th>Nombre</th><th>Precio</th><th>Cantidad</th>
+                <th>Departamento</th><th>Almacén</th><th>Creación</th>
+                <th>Última modificación</th><th>Usuario modificó</th>
+                {% if puede_editar %}<th>Acciones</th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in productos %}
+            <tr>
+                <td>{{ p.id }}</td>
+                <td>{{ p.nombre }}</td>
+                <td>{{ p.precio }}</td>
+                <td>{{ p.cantidad }}</td>
+                <td>{{ p.departamento }}</td>
+                <td>{{ p.almacen_nombre }}</td>
+                <td>{{ p.fecha_hora_creacion }}</td>
+                <td>{{ p.fecha_hora_ultima_modificacion }}</td>
+                <td>{{ p.ultimo_usuario_en_modificar }}</td>
+                {% if puede_editar %}
+                <td>
+                    <a href="{{ url_for('producto_modificar', pid=p['id']) }}" class="btn btn-sm btn-warning">Modificar</a>
+                    <form method="POST" action="{{ url_for('producto_eliminar', pid=p['id']) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                    </form>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

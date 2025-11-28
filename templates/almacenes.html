@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block content %}
+<h4>Almacenes</h4>
+
+{% if crear %}
+  <!-- Formulario para agregar almacén -->
+  <form method="POST" class="row g-3">
+    {{ form.hidden_tag() }}
+    <div class="col-md-6">
+      {{ form.nombre.label }}
+      {{ form.nombre(class="form-control") }}
+    </div>
+    <div class="col-12">
+      <button class="btn btn-primary" type="submit">Agregar</button>
+      <a class="btn btn-secondary" href="{{ url_for('almacenes') }}">Cancelar</a>
+    </div>
+  </form>
+{% else %}
+  <!-- Formulario de filtros -->
+  <form method="POST" class="row g-3 mb-4">
+    {{ form.hidden_tag() }}
+    <div class="col-md-2">{{ form.id.label }} {{ form.id(class="form-control") }}</div>
+    <div class="col-md-4">{{ form.nombre.label }} {{ form.nombre(class="form-control") }}</div>
+    <div class="col-md-3">{{ form.usuario_modificacion.label }} {{ form.usuario_modificacion(class="form-control") }}</div>
+    <div class="col-md-3">{{ form.filtro_modificaciones.label }} {{ form.filtro_modificaciones(class="form-select") }}</div>
+    <div class="col-md-12 mt-3">
+      <button class="btn btn-primary" type="submit">Filtrar</button>
+      {% if puede_editar %}
+        <a class="btn btn-success ms-2" href="{{ url_for('almacen_agregar') }}">Agregar</a>
+      {% endif %}
+    </div>
+  </form>
+
+  <!-- Tabla de almacenes -->
+  <div class="table-responsive mt-3">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th><th>Nombre</th><th>Creación</th>
+          <th>Última modificación</th><th>Último usuario</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in almacenes %}
+        <tr>
+          <td>{{ a['id'] }}</td>
+          <td>{{ a['nombre'] }}</td>
+          <td>{{ a['fecha_hora_creacion'] }}</td>
+          <td>{{ a['fecha_hora_ultima_modificacion'] }}</td>
+          <td>{{ a['ultimo_usuario_en_modificar'] }}</td>
+          <td class="text-nowrap">
+            {% if puede_editar %}
+              <a class="btn btn-sm btn-warning" href="{{ url_for('almacen_modificar', aid=a['id']) }}">Modificar</a>
+              <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#delA{{ a['id'] }}">Eliminar</button>
+
+              <!-- Modal de confirmación -->
+              <div class="modal fade" id="delA{{ a['id'] }}" tabindex="-1">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Confirmar eliminación</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                      ¿Seguro que quieres eliminar el almacén {{ a['nombre'] }} (ID {{ a['id'] }})?
+                    </div>
+                    <div class="modal-footer">
+                      <form method="POST" action="{{ url_for('almacen_eliminar', aid=a['id']) }}">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+{% endblock %}
